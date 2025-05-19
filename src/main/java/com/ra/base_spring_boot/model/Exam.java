@@ -1,5 +1,4 @@
 package com.ra.base_spring_boot.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ra.base_spring_boot.model.base.BaseObject;
 import jakarta.persistence.CascadeType;
@@ -22,6 +21,5 @@ public class Exam extends BaseObject {
 
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
     @JsonManagedReference
-//    @JsonIgnore
     private List<ExamSession> sessions;
 }

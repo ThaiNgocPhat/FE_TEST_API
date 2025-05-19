@@ -8,9 +8,11 @@ import com.ra.base_spring_boot.dto.resp.JwtResponse;
 import com.ra.base_spring_boot.exception.HttpBadRequest;
 import com.ra.base_spring_boot.exception.HttpConflict;
 import com.ra.base_spring_boot.exception.HttpNotFound;
+import com.ra.base_spring_boot.model.Exam;
 import com.ra.base_spring_boot.model.Role;
 import com.ra.base_spring_boot.model.User;
 import com.ra.base_spring_boot.model.constants.RoleName;
+import com.ra.base_spring_boot.repository.IExamRepository;
 import com.ra.base_spring_boot.repository.IRoleRepository;
 import com.ra.base_spring_boot.repository.IUserRepository;
 import com.ra.base_spring_boot.security.jwt.JwtProvider;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class AuthServiceImpl implements IAuthService
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final MailService mailService;
+    private final IExamRepository examRepository;
 
     @Override
     public void register(FormRegister request) throws MessagingException {
@@ -138,6 +142,19 @@ public class AuthServiceImpl implements IAuthService
 
         MessageResponse response = new MessageResponse();
         response.setMessage("User is verified");
+        return response;
+    }
+
+    @Override
+    public  ResponseWrapper<List<String>> getAllExamNames() {
+        List<Exam> exams = examRepository.findAll();
+        List<String> examNames = exams.stream()
+                .map(Exam::getExamName)
+                .collect(Collectors.toList());
+        ResponseWrapper<List<String>> response = new ResponseWrapper<>();
+        response.setCode(200);
+        response.setStatus(HttpStatus.OK);
+        response.setData(examNames);
         return response;
     }
 

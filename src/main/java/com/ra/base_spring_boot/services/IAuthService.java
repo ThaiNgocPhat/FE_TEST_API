@@ -8,6 +8,8 @@ import com.ra.base_spring_boot.dto.req.OtpDto;
 import com.ra.base_spring_boot.dto.resp.JwtResponse;
 import jakarta.mail.MessagingException;
 
+import java.util.List;
+
 public interface IAuthService
 {
 
@@ -16,4 +18,6 @@ public interface IAuthService
     ResponseWrapper<JwtResponse> login(FormLogin formLogin);
 
     MessageResponse verify(OtpDto otp);
+
+    ResponseWrapper<List<String>> getAllExamNames();
 }

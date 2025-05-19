@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -54,5 +55,11 @@ public class AuthController
     public ResponseEntity<MessageResponse> handleVerify(@RequestBody OtpDto otp) {
         MessageResponse response = authService.verify(otp);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/exam-names")
+    public ResponseEntity<ResponseWrapper<List<String>>> getAllExamNames() {
+        ResponseWrapper<List<String>> examNames = authService.getAllExamNames();
+        return new ResponseEntity<>(examNames, HttpStatus.OK);
     }
 }
