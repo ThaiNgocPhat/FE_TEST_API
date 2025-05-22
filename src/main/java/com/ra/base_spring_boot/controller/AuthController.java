@@ -2,6 +2,7 @@ package com.ra.base_spring_boot.controller;
 
 import com.ra.base_spring_boot.dto.MessageResponse;
 import com.ra.base_spring_boot.dto.ResponseWrapper;
+import com.ra.base_spring_boot.dto.req.ExamNameDTO;
 import com.ra.base_spring_boot.dto.req.FormLogin;
 import com.ra.base_spring_boot.dto.req.FormRegister;
 import com.ra.base_spring_boot.dto.req.OtpDto;
@@ -58,8 +59,15 @@ public class AuthController
     }
 
     @GetMapping("/exam-names")
-    public ResponseEntity<ResponseWrapper<List<String>>> getAllExamNames() {
-        ResponseWrapper<List<String>> examNames = authService.getAllExamNames();
+    public ResponseEntity<ResponseWrapper<List<ExamNameDTO>>> getAllExamNames() {
+        ResponseWrapper<List<ExamNameDTO>> examNames = authService.getAllExamNames();
         return new ResponseEntity<>(examNames, HttpStatus.OK);
     }
+
+    @GetMapping("/session-types")
+    public ResponseEntity<ResponseWrapper<List<String>>> getSessionType(){
+        ResponseWrapper<List<String>> sessionTypes = authService.getSessionTypes();
+        return new ResponseEntity<>(sessionTypes, HttpStatus.OK);
+    }
+
 }

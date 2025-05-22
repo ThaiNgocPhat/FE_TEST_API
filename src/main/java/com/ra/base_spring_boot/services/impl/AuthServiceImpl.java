@@ -1,6 +1,7 @@
 package com.ra.base_spring_boot.services.impl;
 import com.ra.base_spring_boot.dto.MessageResponse;
 import com.ra.base_spring_boot.dto.ResponseWrapper;
+import com.ra.base_spring_boot.dto.req.ExamNameDTO;
 import com.ra.base_spring_boot.dto.req.FormLogin;
 import com.ra.base_spring_boot.dto.req.FormRegister;
 import com.ra.base_spring_boot.dto.req.OtpDto;
@@ -12,6 +13,7 @@ import com.ra.base_spring_boot.model.Exam;
 import com.ra.base_spring_boot.model.Role;
 import com.ra.base_spring_boot.model.User;
 import com.ra.base_spring_boot.model.constants.RoleName;
+import com.ra.base_spring_boot.model.constants.SessionType;
 import com.ra.base_spring_boot.repository.IExamRepository;
 import com.ra.base_spring_boot.repository.IRoleRepository;
 import com.ra.base_spring_boot.repository.IUserRepository;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -146,17 +149,31 @@ public class AuthServiceImpl implements IAuthService
     }
 
     @Override
-    public  ResponseWrapper<List<String>> getAllExamNames() {
+    public ResponseWrapper<List<ExamNameDTO>> getAllExamNames() {
         List<Exam> exams = examRepository.findAll();
-        List<String> examNames = exams.stream()
-                .map(Exam::getExamName)
+
+        List<ExamNameDTO> examNames = exams.stream()
+                .map(exam -> new ExamNameDTO(exam.getId(), exam.getExamName()))
                 .collect(Collectors.toList());
-        ResponseWrapper<List<String>> response = new ResponseWrapper<>();
+
+        ResponseWrapper<List<ExamNameDTO>> response = new ResponseWrapper<>();
         response.setCode(200);
         response.setStatus(HttpStatus.OK);
         response.setData(examNames);
         return response;
     }
 
+    @Override
+    public ResponseWrapper<List<String>> getSessionTypes() {
+        List<String> sessionTypes = Arrays.stream(SessionType.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+
+        ResponseWrapper<List<String>> response = new ResponseWrapper<>();
+        response.setCode(200);
+        response.setStatus(HttpStatus.OK);
+        response.setData(sessionTypes);
+        return response;
+    }
 
 }

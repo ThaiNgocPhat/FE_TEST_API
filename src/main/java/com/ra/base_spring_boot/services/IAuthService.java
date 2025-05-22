@@ -2,6 +2,7 @@ package com.ra.base_spring_boot.services;
 
 import com.ra.base_spring_boot.dto.MessageResponse;
 import com.ra.base_spring_boot.dto.ResponseWrapper;
+import com.ra.base_spring_boot.dto.req.ExamNameDTO;
 import com.ra.base_spring_boot.dto.req.FormLogin;
 import com.ra.base_spring_boot.dto.req.FormRegister;
 import com.ra.base_spring_boot.dto.req.OtpDto;
@@ -19,5 +20,6 @@ public interface IAuthService
 
     MessageResponse verify(OtpDto otp);
 
-    ResponseWrapper<List<String>> getAllExamNames();
+    ResponseWrapper<List<ExamNameDTO>> getAllExamNames();
+    ResponseWrapper<List<String>> getSessionTypes();
 }
