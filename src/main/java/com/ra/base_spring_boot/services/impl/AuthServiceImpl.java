@@ -29,10 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -162,18 +159,4 @@ public class AuthServiceImpl implements IAuthService
         response.setData(examNames);
         return response;
     }
-
-    @Override
-    public ResponseWrapper<List<String>> getSessionTypes() {
-        List<String> sessionTypes = Arrays.stream(SessionType.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
-
-        ResponseWrapper<List<String>> response = new ResponseWrapper<>();
-        response.setCode(200);
-        response.setStatus(HttpStatus.OK);
-        response.setData(sessionTypes);
-        return response;
-    }
-
 }

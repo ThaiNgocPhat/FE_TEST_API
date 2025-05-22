@@ -21,5 +21,4 @@ public interface IAuthService
     MessageResponse verify(OtpDto otp);
 
     ResponseWrapper<List<ExamNameDTO>> getAllExamNames();
-    ResponseWrapper<List<String>> getSessionTypes();
 }

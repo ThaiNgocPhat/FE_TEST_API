@@ -63,11 +63,4 @@ public class AuthController
         ResponseWrapper<List<ExamNameDTO>> examNames = authService.getAllExamNames();
         return new ResponseEntity<>(examNames, HttpStatus.OK);
     }
-
-    @GetMapping("/session-types")
-    public ResponseEntity<ResponseWrapper<List<String>>> getSessionType(){
-        ResponseWrapper<List<String>> sessionTypes = authService.getSessionTypes();
-        return new ResponseEntity<>(sessionTypes, HttpStatus.OK);
-    }
-
 }
