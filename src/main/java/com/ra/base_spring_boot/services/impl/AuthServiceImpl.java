@@ -1,15 +1,13 @@
 package com.ra.base_spring_boot.services.impl;
 import com.ra.base_spring_boot.dto.MessageResponse;
 import com.ra.base_spring_boot.dto.ResponseWrapper;
-import com.ra.base_spring_boot.dto.req.ExamNameDTO;
-import com.ra.base_spring_boot.dto.req.FormLogin;
-import com.ra.base_spring_boot.dto.req.FormRegister;
-import com.ra.base_spring_boot.dto.req.OtpDto;
+import com.ra.base_spring_boot.dto.req.*;
 import com.ra.base_spring_boot.dto.resp.JwtResponse;
 import com.ra.base_spring_boot.exception.HttpBadRequest;
 import com.ra.base_spring_boot.exception.HttpConflict;
 import com.ra.base_spring_boot.exception.HttpNotFound;
 import com.ra.base_spring_boot.model.Exam;
+import com.ra.base_spring_boot.model.ExamSession;
 import com.ra.base_spring_boot.model.Role;
 import com.ra.base_spring_boot.model.User;
 import com.ra.base_spring_boot.model.constants.RoleName;
@@ -23,6 +21,7 @@ import com.ra.base_spring_boot.services.IRoleService;
 import com.ra.base_spring_boot.utils.MailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +41,7 @@ public class AuthServiceImpl implements IAuthService
     private final JwtProvider jwtProvider;
     private final MailService mailService;
     private final IExamRepository examRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public void register(FormRegister request) throws MessagingException {
@@ -159,4 +159,67 @@ public class AuthServiceImpl implements IAuthService
         response.setData(examNames);
         return response;
     }
+
+    @Override
+    public ResponseWrapper<ExamWithSessionsDTO> getExamWithSessions(Long examId) {
+        Exam exam = examRepository.findById(examId)
+                .orElseThrow(() -> new HttpNotFound("Exam not found"));
+
+        List<SessionInfoDTO> sessionDTOs = exam.getSessions().stream()
+                .map(session -> new SessionInfoDTO(
+                        session.getId(),
+                        session.getSessionType().name()
+                ))
+                .collect(Collectors.toList());
+
+        ExamWithSessionsDTO dto = new ExamWithSessionsDTO(
+                exam.getId(),
+                exam.getExamName(),
+                sessionDTOs
+        );
+
+        ResponseWrapper<ExamWithSessionsDTO> response = new ResponseWrapper<>();
+        response.setCode(200);
+        response.setStatus(HttpStatus.OK);
+        response.setData(dto);
+        return response;
+    }
+
+    @Override
+    public ResponseWrapper<List<ExamQuestionDTO>> getExamQuestions(Long examId, SessionType sessionType) {
+        Optional<Exam> examOpt = examRepository.findById(examId);
+
+        if (examOpt.isEmpty()) {
+            return ResponseWrapper.<List<ExamQuestionDTO>>builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .data(null)
+                    .build();
+        }
+
+        Optional<ExamSession> sessionOpt = examOpt.get().getSessions().stream()
+                .filter(s -> s.getSessionType() == sessionType)
+                .findFirst();
+
+        if (sessionOpt.isEmpty()) {
+            return ResponseWrapper.<List<ExamQuestionDTO>>builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .data(null)
+                    .build();
+        }
+
+        List<ExamQuestionDTO> questionDTOs = sessionOpt.get()
+                .getQuestions()
+                .stream()
+                .map(q -> modelMapper.map(q, ExamQuestionDTO.class))
+                .toList();
+
+        ResponseWrapper<List<ExamQuestionDTO>> response = new ResponseWrapper<>();
+        response.setCode(200);
+        response.setStatus(HttpStatus.OK);
+        response.setData(questionDTOs);
+        return response;
+    }
+
 }

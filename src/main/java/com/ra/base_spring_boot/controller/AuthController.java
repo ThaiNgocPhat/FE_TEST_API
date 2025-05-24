@@ -2,11 +2,10 @@ package com.ra.base_spring_boot.controller;
 
 import com.ra.base_spring_boot.dto.MessageResponse;
 import com.ra.base_spring_boot.dto.ResponseWrapper;
-import com.ra.base_spring_boot.dto.req.ExamNameDTO;
-import com.ra.base_spring_boot.dto.req.FormLogin;
-import com.ra.base_spring_boot.dto.req.FormRegister;
-import com.ra.base_spring_boot.dto.req.OtpDto;
+import com.ra.base_spring_boot.dto.req.*;
 import com.ra.base_spring_boot.dto.resp.JwtResponse;
+import com.ra.base_spring_boot.model.Exam;
+import com.ra.base_spring_boot.model.constants.SessionType;
 import com.ra.base_spring_boot.services.IAuthService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -62,5 +61,17 @@ public class AuthController
     public ResponseEntity<ResponseWrapper<List<ExamNameDTO>>> getAllExamNames() {
         ResponseWrapper<List<ExamNameDTO>> examNames = authService.getAllExamNames();
         return new ResponseEntity<>(examNames, HttpStatus.OK);
+    }
+
+    @GetMapping("/exam/{examId}")
+    public ResponseEntity<ResponseWrapper<ExamWithSessionsDTO>> getExamWithSessions(@PathVariable Long examId){
+        ResponseWrapper<ExamWithSessionsDTO> response = authService.getExamWithSessions(examId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/exam/{examId}/do/{sessionType}")
+    public ResponseEntity<ResponseWrapper<List<ExamQuestionDTO>>> getExamQuestions(@PathVariable Long examId, @PathVariable SessionType sessionType){
+        ResponseWrapper<List<ExamQuestionDTO>> response = authService.getExamQuestions(examId, sessionType);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
